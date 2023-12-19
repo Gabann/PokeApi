@@ -9,7 +9,7 @@
 		<h1 class="text-center">PokeApi in vue js</h1>
 
 		<div>
-			<p>Login space</p>
+			<span>Login space</span>
 		</div>
 	</header>
 </template>
@@ -18,10 +18,10 @@
 header {
 	height: 10vh;
 	background-color: var(--main-color);
-	padding: 30px;
+	padding: 0px 30px 0px 30px;
 }
 
 header img {
-	max-height: 100%;
+	max-height: 90%;
 }
 </style>

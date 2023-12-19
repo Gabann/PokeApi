@@ -70,5 +70,6 @@ const props = defineProps({
 .pokemon-card {
 	border: 1px solid red;
 	height: 100%;
+	padding: 20px;
 }
 </style>

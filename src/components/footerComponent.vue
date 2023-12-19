@@ -3,8 +3,18 @@
 </script>
 
 <template>
-	<footer class="d-flex align-items-center justify-content-center">
-		<h2>Bonjour, je suis un footer</h2>
+	<footer class="d-flex align-items-center justify-content-between">
+		<div class="left">
+			<a href="https://github.com/Gabann/PokeApi">Source code</a>
+		</div>
+
+		<div class="middle">
+			<h2>Bonjour, je suis un footer</h2>
+		</div>
+
+		<div class="right">
+
+		</div>
 	</footer>
 </template>
 
@@ -12,10 +22,6 @@
 footer {
 	background-color: var(--main-color);
 	height: 7vh;
-}
-
-footer p {
-	margin: 0;
-	padding: 0;
+	padding: 0px 30px 0px 30px;
 }
 </style>
