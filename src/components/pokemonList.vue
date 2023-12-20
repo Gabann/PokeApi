@@ -1,11 +1,10 @@
 <script setup>
-import {usePokeApiStore} from "@/stores/pokeApiStore.js";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, watchEffect} from "vue";
 import PokemonCard from "@/components/pokemonCard.vue";
 import {Modal} from "bootstrap";
+import {useFilterStore} from "@/stores/filterStore.js";
 
-let pokeApiStore = usePokeApiStore()
-let pokemons = ref([])
+let filterStore = useFilterStore();
 
 let currentPage = ref(1);
 let pokemonsPerPage = 20;
@@ -13,30 +12,29 @@ let pokemonsPerPage = 20;
 let modal;
 let modalPokemon = ref({});
 
-watch(currentPage, async () => {
-	pokemons.value = await pokeApiStore.getPokemons(pokemonsPerPage, (currentPage.value * pokemonsPerPage) - pokemonsPerPage)
-}, {immediate: true})
-
 function switchPage(targetPage) {
-	currentPage.value = Math.floor(Math.min(Math.max(targetPage, 1), (1017 / pokemonsPerPage) + 1));
+	currentPage.value = Math.floor(Math.min(Math.max(targetPage, 1), (filterStore.filteredPokemonArray.length / pokemonsPerPage) + 1));
+}
+
+function displayModal(pokemon) {
+	modalPokemon.value = pokemon;
+	modal.show();
 }
 
 onMounted(() => {
 	modal = new Modal(document.getElementById('pokemonModal'));
-})
-
-function displayModal(pokemon) {
-	modalPokemon.value = pokemon;
-
-	modal.show();
-}
+});
 </script>
 
 <template>
 	<div class="d-flex flex-wrap">
-		<div class="col-3" v-for="pokemon in pokemons">
-			<PokemonCard :pokemon="pokemon" @click="displayModal(pokemon)"></PokemonCard>
-		</div>
+
+		<template v-for="(pokemon, index) in filterStore.filteredPokemonArray">
+			<div class="col-xl-3 col-md-4 col-12"
+			     v-if="index < (pokemonsPerPage * currentPage) && index >= (currentPage * pokemonsPerPage) - pokemonsPerPage">
+				<PokemonCard :pokemon="pokemon" @click="displayModal(pokemon)"></PokemonCard>
+			</div>
+		</template>
 	</div>
 
 	<div class="page-navigation mx-auto justify-content-center d-flex align-items-center">
@@ -74,17 +72,21 @@ function displayModal(pokemon) {
 		</nav>
 	</div>
 
-	<div class="modal" id="pokemonModal" tabindex="-1" aria-labelledby="pokemonModal" aria-hidden="true">
+
+	<!--	Todo try to use v-model for this-->
+	<div class="modal" id="pokemonModal" tabindex="-1" aria-labelledby="pokemonModal" aria-hidden="true" v-if="modalPokemon">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
-				<div class="modal-header" v-if="modalPokemon">
-					<h5 class="modal-title" id="pokemonModal">{{ modalPokemon.name }}</h5>
+
+				<div class="modal-header">
+					<h5 class="modal-title" id="pokemonModal" v-if="modalPokemon.name">{{ modalPokemon.name.fr }}</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
+
 				<div class="modal-body">
 					<div class="pokemon-modal">
-						<div class="row">
-							<img :src="modalPokemon.sprite">
+						<div class="row" v-if="modalPokemon.sprites">
+							<img :src="modalPokemon.sprites.regular">
 						</div>
 
 						<div class="row">
@@ -92,16 +94,7 @@ function displayModal(pokemon) {
 								№
 							</div>
 							<div class="col-9">
-								<p>{{ modalPokemon.id }}</p>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-3">
-								<p>Name:</p>
-							</div>
-							<div class="col-9">
-								<p>{{ modalPokemon.name }}</p>
+								<p>{{ modalPokemon.pokedexId }}</p>
 							</div>
 						</div>
 
@@ -123,21 +116,22 @@ function displayModal(pokemon) {
 							</div>
 						</div>
 
-						<div class="row">
+						<div class="row" v-if="modalPokemon.types">
 							<div class="col-3">
 								<p>Types:</p>
 							</div>
 							<div class="col-9">
-								<p v-for="type in modalPokemon.types">{{ type.type.name }}</p>
+								<p v-for="type in modalPokemon.types">{{ type.name }}</p>
 							</div>
 						</div>
 
-						<div class="row">
+
+						<div class="row" v-if="modalPokemon.talents">
 							<div class="col-3">
 								<p>Abilities:</p>
 							</div>
 							<div class="col-9">
-								<p v-for="ability in modalPokemon.abilities">{{ ability.ability.name }}</p>
+								<p v-for="talent in modalPokemon.talents">{{ talent.name }}</p>
 							</div>
 						</div>
 					</div>

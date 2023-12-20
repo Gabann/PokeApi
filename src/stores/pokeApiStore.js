@@ -1,58 +1,65 @@
 import {defineStore} from "pinia";
-import {Pokemon} from "@/pokemon.js";
-import {watchEffect} from "vue";
-import data from "bootstrap/js/src/dom/data.js";
+import {Pokemon} from "../pokemon.js";
+import {ref} from "vue";
 
-const baseUrl = 'https://pokeapi.co/api/v2/';
-let pokemonCount;
-let allPokemons;
+const baseUrl = 'https://tyradex.tech/api/v1/';
 
 export const usePokeApiStore = defineStore('pokeApi', () => {
-	async function getPokemons(count, offSet) {
-		try {
-			let results = []
-			let response = await fetch(baseUrl + `pokemon/?limit=${count}&offset=${offSet}`)
-
-			return formatApiResponse(response)
-		} catch (e) {
-			console.error(e);
-		}
-	}
+	let allPokemons = ref([]);
 
 	async function getAllPokemons() {
-		try {
-			let response = await fetch(baseUrl + `pokemon?limit=100000&offset=0`)
+		if (!localStorage.getItem("allPokemons")) {
+			console.log("used api");
+			try {
+				let response = await fetch(baseUrl + `pokemon`);
+				let formattedResponse = await formatApiResponse(response);
 
-			return formatApiResponse(response)
-
-
-		} catch (e) {
-			console.error(e);
+				allPokemons = formattedResponse;
+				localStorage.setItem('allPokemons', JSON.stringify(formattedResponse));
+			} catch (e) {
+				console.error(e);
+			}
+		} else {
+			console.log("used local storage");
+			allPokemons = JSON.parse(localStorage.getItem('allPokemons'));
 		}
 	}
 
 	async function formatApiResponse(response) {
-		let results = []
-		let data = await response.json()
+		let results = [];
+		let data = await response.json();
 
-		for (let id of data.results) {
-			response = await fetch(id.url)
-			data = await response.json()
+		for (let pokemon of data) {
+			// response = await fetch(pokemon.url)
+			// data = await response.json()
 
-			let currentPokemon = new Pokemon(data.id, data.sprites.front_default, data.name, data.height, data.weight, data.types, data.abilities, data.stats);
-			results.push(currentPokemon)
+			let currentPokemon = new Pokemon(
+				pokemon.pokedexId,
+				pokemon.generation,
+				pokemon.category,
+				pokemon.name,
+				pokemon.sprites,
+				pokemon.types,
+				pokemon.talents,
+				pokemon.stats,
+				pokemon.resistances,
+				pokemon.evolution,
+				pokemon.height,
+				pokemon.weight,
+				pokemon.egg_groups,
+				pokemon.sexe,
+				pokemon.catch_rate,
+				pokemon.level_100,
+				pokemon.forme
+			);
+			results.push(currentPokemon);
 		}
 
 		return results;
 	}
 
+	getAllPokemons();
 
-	watchEffect(async () => {
-		let response = await fetch(baseUrl + 'pokedex/national');
-		let data = await response.json()
-		pokemonCount = data.pokemon_entries.length
-	});
-
-	return {getPokemons, pokemonCount}
-})
+	return {allPokemons};
+});
 

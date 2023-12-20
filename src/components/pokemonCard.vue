@@ -7,7 +7,7 @@ const props = defineProps({
 <template>
 	<div class="pokemon-card">
 		<div class="row">
-			<img :src="pokemon.sprite">
+			<img :src="pokemon.sprites.regular">
 		</div>
 
 		<div class="row">
@@ -15,7 +15,7 @@ const props = defineProps({
 				№
 			</div>
 			<div class="col-9">
-				<p>{{ pokemon.id }}</p>
+				<p>{{ pokemon.pokedexId }}</p>
 			</div>
 		</div>
 
@@ -24,7 +24,7 @@ const props = defineProps({
 				<p>Name:</p>
 			</div>
 			<div class="col-9">
-				<p>{{ pokemon.name }}</p>
+				<p>{{ pokemon.name.fr }}</p>
 			</div>
 		</div>
 
@@ -51,7 +51,7 @@ const props = defineProps({
 				<p>Types:</p>
 			</div>
 			<div class="col-9">
-				<p v-for="type in pokemon.types">{{ type.type.name }}</p>
+				<p v-for="type in pokemon.types">{{ type.name }}</p>
 			</div>
 		</div>
 
@@ -60,7 +60,7 @@ const props = defineProps({
 				<p>Abilities:</p>
 			</div>
 			<div class="col-9">
-				<p v-for="ability in pokemon.abilities">{{ ability.ability.name }}</p>
+				<p v-for="talent in pokemon.talents">{{ talent.name }}</p>
 			</div>
 		</div>
 	</div>
