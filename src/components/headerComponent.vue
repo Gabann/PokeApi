@@ -1,15 +1,21 @@
 <script setup>
+import router from "@/router/index.js";
 
+const reloadPage = () => {
+	window.location.reload();
+};
 </script>
 
 <template>
-	<header class="d-flex align-items-center justify-content-between">
-		<img src="../assets/logo.png" alt="logo">
+	<header class="d-flex align-items-center">
+		<div class="col-4">
+			<!--			<img src="../assets/logo.png" alt="logo" @click="reloadPage">-->
+		</div>
 
-		<h1 class="text-center">PokeApi in vue js</h1>
+		<h1 class="text-center col-4">PokeApi in vue js</h1>
 
-		<div>
-			<span>Login space</span>
+		<div class="col-4" style="text-align: right">
+			<span @click="router.push('/login/')">Login / Sign up</span>
 		</div>
 	</header>
 </template>

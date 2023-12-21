@@ -4,23 +4,25 @@ import FooterComponent from "@/components/footerComponent.vue";
 import HeaderComponent from "@/components/headerComponent.vue";
 import Filters from "@/components/filters.vue";
 import PokemonDetails from "@/components/pokemonDetails.vue";
+import {RouterLink, RouterView} from 'vue-router';
 </script>
 
 <template>
-	<pokemon-details></pokemon-details>
 	<header-component></header-component>
 
 	<div class="container-fluid">
-		<main>
-			<filters></filters>
 
-			<div class="col-9 mx-auto">
-				<PokemonList/>
+
+		<main>
+
+			<div class="col-10 mx-auto">
+				<RouterView/>
 			</div>
 
 
 		</main>
 	</div>
+
 
 	<footer-component></footer-component>
 </template>

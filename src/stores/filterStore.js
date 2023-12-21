@@ -7,6 +7,7 @@ export const useFilterStore = defineStore('filterStore', () => {
 
 	let pokeApiStore = usePokeApiStore();
 	let filterArray = ref([]);
+	let searchQuery = ref('');
 
 	let filteredPokemonArray = computed(() => {
 		let allPokemons = pokeApiStore.allPokemons;
@@ -16,13 +17,22 @@ export const useFilterStore = defineStore('filterStore', () => {
 			filteredArray = filterPokemonList(filteredArray, filter.property, filter.filter);
 		}
 
+		filteredArray = searchByNameOrId(filteredArray, searchQuery.value);
+
 		return filteredArray;
 	});
 
+	function searchByNameOrId(array, searchedName) {
+		return array.filter((pokemon) => {
+			let pokemonName = pokemon.name.fr.toUpperCase();
+			let pokemonId = pokemon.pokedexId.toString();
+			searchedName = searchedName.toUpperCase();
+			return (pokemonName.startsWith(searchedName) || pokemonId.startsWith(searchedName));
+		});
+	}
+
 	function filterPokemonList(array, property, filter) {
 		return array.filter((pokemon) => {
-			// const keys = property.split('.');
-			// const deepProperty = keys.reduce((obj, key) => obj[key], pokemon);
 			return containsValue(pokemon[property], filter);
 		});
 	}
@@ -34,6 +44,16 @@ export const useFilterStore = defineStore('filterStore', () => {
 		}
 
 		console.log(filterArray.value);
+	}
+
+	function removeFilter(filter) {
+		filterArray.value = filterArray.value.filter(f => !(f.property === filter.property && f.filter === filter.filter));
+		console.log(filterArray.value);
+	}
+
+	function clearFilters() {
+		filterArray.value = [];
+		searchQuery.value = '';
 	}
 
 	function containsValue(obj, targetValue) {
@@ -54,8 +74,6 @@ export const useFilterStore = defineStore('filterStore', () => {
 		return false;
 	}
 
-	// addFilter(new Filter("types", "Plante"));
-
-	return {filteredPokemonArray, addFilter};
+	return {filteredPokemonArray, addFilter, removeFilter, searchQuery, clearFilters};
 });
 

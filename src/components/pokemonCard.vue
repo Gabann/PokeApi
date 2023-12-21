@@ -30,19 +30,19 @@ const props = defineProps({
 
 		<div class="row">
 			<div class="col-3">
-				<p>Height:</p>
+				<p>Catégorie:</p>
 			</div>
 			<div class="col-9">
-				<p>{{ pokemon.height }}</p>
+				<p>{{ pokemon.category }}</p>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-3">
-				<p>Weight:</p>
+				<p>Generation:</p>
 			</div>
 			<div class="col-9">
-				<p>{{ pokemon.weight }}</p>
+				<p>{{ pokemon.generation }}</p>
 			</div>
 		</div>
 
@@ -51,16 +51,10 @@ const props = defineProps({
 				<p>Types:</p>
 			</div>
 			<div class="col-9">
-				<p v-for="type in pokemon.types">{{ type.name }}</p>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-3">
-				<p>Abilities:</p>
-			</div>
-			<div class="col-9">
-				<p v-for="talent in pokemon.talents">{{ talent.name }}</p>
+				<span v-for="type in pokemon.types">
+					{{ type.name }}
+					<img :src="type.image">
+				</span>
 			</div>
 		</div>
 	</div>
